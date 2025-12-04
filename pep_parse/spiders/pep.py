@@ -21,8 +21,8 @@ class PepSpider(scrapy.Spider):
         # title: str = response.xpath(
         #     'string(//h1[@class="page-title"])').get().strip()
 
-        # Пример заголовка 'PEP 2 – Procedure for Adding New Modules'
-        # между номером и наименованием стандарта символ юникода 8211
+        # Пример заголовка 'PEP 2 – Procedure for Adding New Modules',
+        # между номером и наименованием стандарта символ юникода 8211,
         # наименование тоже может содержать тире, поэтому ограничиваем split
         number_string, name = title.split(' – ', 1)
         yield PepParseItem(
