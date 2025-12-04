@@ -15,5 +15,5 @@ FEEDS = {
 }
 
 ITEM_PIPELINES = {
-    'pep_parse.pipelines.StatusSummaryPipeline': 300,
+    'pep_parse.pipelines.PepParsePipeline': 300,
 }

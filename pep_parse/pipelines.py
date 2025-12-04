@@ -4,7 +4,7 @@ import os
 from collections import Counter
 
 
-class StatusSummaryPipeline:
+class PepParsePipeline:
 
     def open_spider(self, spider):
         self.status_counter = Counter()

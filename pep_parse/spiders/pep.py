@@ -14,7 +14,13 @@ class PepSpider(scrapy.Spider):
             yield response.follow(pep_link, callback=self.parse_pep)
 
     def parse_pep(self, response):
-        title: str = response.css('h1.page-title::text').get().strip()
+        # В заголовке, например PEP 499, могут встечаться вложенные теги <code>
+        title: str = ''.join(response.css(
+            'h1.page-title *::text').getall()).strip()
+        # или
+        # title: str = response.xpath(
+        #     'string(//h1[@class="page-title"])').get().strip()
+
         # Пример заголовка 'PEP 2 – Procedure for Adding New Modules'
         # между номером и наименованием стандарта символ юникода 8211
         # наименование тоже может содержать тире, поэтому ограничиваем split
