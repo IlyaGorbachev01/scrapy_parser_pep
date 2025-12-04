@@ -22,6 +22,6 @@ class PepSpider(scrapy.Spider):
         yield PepParseItem(
             number=int(number_string.replace('PEP', '').strip()),
             name=name,
-            status=response.css('dt:contains("Status") + dd::text').get()
-            # xpath('//dt[contains(text(), "Status")]/following-sibling::dd[1]/text()')
+            status=response.css(
+                'dt:contains("Status") + dd > abbr::text').get()
         )

@@ -12,12 +12,6 @@ FEEDS = {
         'fields': ['number', 'name', 'status'],
         'overwrite': True
     },
-    # Файлы со сводкой по статусам.
-    'results/status_summary_%(time)s.csv': {
-        'format': 'csv',
-        'fields': ['status', 'count'],
-        'overwrite': True
-    },
 }
 
 ITEM_PIPELINES = {
