@@ -3,26 +3,59 @@ from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
-from scrapy.item import Item
 from scrapy.spiders import Spider
 
-BASE_DIR = Path(__file__).parent
+from pep_parse.items import PepParseItem
+
+# Стоит ли перенести константы в settings.py? Или создать constants.py?
+BASE_DIR = Path(__file__).parent.parent
+RESULTS_DIR_NAME = 'results'
 
 
 class PepParsePipeline:
+    """Пайплайн для агрегации статусов PEP и записи сводки в CSV-файл."""
 
     def open_spider(self, spider: Spider) -> None:
-        self.status_counter: Counter[str, int] = Counter()
+        """Инициализирует счётчик статусов PEP при запуске паука.
 
-    def process_item(self, item: Item, spider: Spider) -> Item:
-        self.status_counter[item['status']] += 1
+        Args:
+            spider (Spider): Экземпляр запускаемого паука.
+        """
+
+        self.status_counter: Counter[str] = Counter()
+
+    def process_item(self, item: PepParseItem, spider: Spider) -> PepParseItem:
+        """Увеличивает счётчик для статуса обрабатываемого PEP.
+
+        Args:
+            item (PepParseItem): Элемент, представляющий один PEP,
+                                 содержащий поля 'number', 'name', 'status'.
+            spider (Spider): Паук, который извлёк данный элемент.
+
+        Returns:
+            PepParseItem: Тот же элемент без изменений.
+        """
+
+        self.status_counter[item.get('status', 'Unknown')] += 1
         return item
 
     def close_spider(self, spider: Spider) -> None:
-        RESULTS_DIR: Path = BASE_DIR / 'results'
-        RESULTS_DIR.mkdir(exist_ok=True)
+        """Записывает сводный CSV-файл с количеством PEP по статусам.
+
+        Файл содержит:
+            - строки вида «status,count» для каждого уникального статуса,
+            - итоговую строку «Total,<общее_количество>».
+
+        Имя файла: results/status_summary_ГГГГ-ММ-ДД_ЧЧ-ММ-СС.csv
+
+        Args:
+            spider (Spider): Экземпляр завершаемого паука.
+        """
+
+        results_dir: Path = BASE_DIR / RESULTS_DIR_NAME
+        results_dir.mkdir(exist_ok=True)
         timestamp: str = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        filename: Path = RESULTS_DIR / f'status_summary_{timestamp}.csv'
+        filename: Path = results_dir / f'status_summary_{timestamp}.csv'
 
         total: int = sum(self.status_counter.values())
 
