@@ -7,7 +7,6 @@ from scrapy.spiders import Spider
 
 from pep_parse.items import PepParseItem
 
-# Стоит ли перенести константы в settings.py? Или создать constants.py?
 BASE_DIR = Path(__file__).parent.parent
 RESULTS_DIR_NAME = 'results'
 
@@ -62,6 +61,5 @@ class PepParsePipeline:
         with open(filename, mode='w', encoding='utf-8', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(['status', 'count'])
-            for status, count in sorted(self.status_counter.items()):
-                writer.writerow([status, count])
+            writer.writerows(sorted(self.status_counter.items()))
             writer.writerow(['Total', total])

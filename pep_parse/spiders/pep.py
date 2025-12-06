@@ -45,9 +45,6 @@ class PepSpider(scrapy.Spider):
         # В заголовке могут быть вложенные теги, например <code> в PEP 499.
         title: str = ''.join(response.css(
             'h1.page-title *::text').getall()).strip()
-        # или
-        # title: str = response.xpath(
-        #     'string(//h1[@class="page-title"])').get().strip()
 
         # Пример заголовка 'PEP 2 – Procedure for Adding New Modules',
         # между номером и наименованием стандарта символ юникода 8211,
